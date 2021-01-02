@@ -2,10 +2,10 @@ module.exports = {
   siteMetadata: {
     title: `OrnateLabyrinth`,
     name: `Deepak`,
-    siteUrl: `https://novela.narative.co`,
+    siteUrl: `https://deepakgouda.netlify.app/`,
     description: `This is my description`,
     hero: {
-      heading: `Welcome to OrnateLabyrinth, my personal space.`,
+      heading: `Welcome to OrnateLabyrinth, my personal space`,
       maxWidth: 652,
     },
     social: [
