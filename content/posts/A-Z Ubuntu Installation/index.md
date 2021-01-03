@@ -1,7 +1,7 @@
 ---
 title: A-Z Ubuntu Installation Guide
 author: Deepak
-date: 2021-01-02
+date: 2019-06-20
 hero: ./images/denys-nevozhai.jpg
 excerpt: My experience in installing Debian Linux variants
 ---
