@@ -1,2 +1,2 @@
 ### Hi there!
-I'm planning on building this site in my spare time.
+I'm dumping my articles [here](https://deepakgouda.netlify.app/).
