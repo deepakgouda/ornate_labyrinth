@@ -32,7 +32,7 @@ Quit : `\q`
 
 ### 1. Create DB
 * `sudo su - postgres`
-* `$ createdb hft`
+* `$ createdb library`
 
 ### 2. Create users and grant access
 * `createuser john`
