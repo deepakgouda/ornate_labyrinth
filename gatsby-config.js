@@ -3,7 +3,7 @@ module.exports = {
     title: `OrnateLabyrinth`,
     name: `Deepak`,
     siteUrl: `https://deepakgouda.netlify.app/`,
-    description: `This is my description`,
+    description: `My personal space`,
     hero: {
       heading: `Welcome to OrnateLabyrinth, my personal space`,
       maxWidth: 652,
