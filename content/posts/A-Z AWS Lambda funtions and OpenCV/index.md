@@ -43,9 +43,9 @@ ssh -i ~/path/to/key/<sample_pair>.pem ec2-user@<public_ip>
 ## Creating a lambda function
 A Lambda function was created from the [AWS Lambda](https://us-east-2.console.aws.amazon.com/lambda/home?region=us-east-2#/functions) dashboard specifying the Python environment. Detailed description can be found [here](https://docs.aws.amazon.com/lambda/latest/dg/getting-started-create-function.html).
 
-We are offered with a flow of the function starting from a trigger point to the main function followed by its output. We are also provided a web editor which supports a function size can upto 3 MB. Beyond that limit, the functions have to be uploaded as a zip along with the dependencies. Zip files of size upto 50 MB can be uploaded directly using the dashboard or AWS CLI. Libraries like OpenCV cross beyond 50 MB mark and we upload the function into S3 which is a storage service by AWS. 
+We are offered with a flow of the function starting from a trigger point to the main function followed by its output. We are also provided a web editor which supports a function size of upto 3 MB. Beyond that limit, the functions have to be uploaded as a zip along with the dependencies. Zip files of size upto 50 MB can be uploaded directly using the dashboard or AWS CLI. Libraries like OpenCV cross beyond 50 MB mark and we upload the function using AWS S3. 
 
-The targeted workflow is to develop code in local environment and use an EC2 instance to install and zip all dependencies(ideally a one-time operation). Next, the zip would be uploaded to AWS S3 from where the lambda function will be imported.
+The targeted workflow is to develop code in local environment and use an EC2 instance to install and zip all dependencies(_a one-time operation_). Next, the zip would be uploaded to AWS S3 from where the lambda function will be imported.
 
 #### Errors and troubleshooting
 1. Ensure the following trust policy in case you get errors due to limited execution role
@@ -69,11 +69,11 @@ The targeted workflow is to develop code in local environment and use an EC2 ins
    }
    ```
 
-2. In case the lambda_function could not be found during the import step, ensure that the handler info is `<file_name>.<main_function>`. For instance, if the entry point is `lambda_handler` defined in `lambda_function.py`, the handler info will be `lambda_function.lambda_handler`
+2. In case the lambda_function could not be found during the import step, ensure that the handler info, mentioned in the Lambda dashboard is `<file_name>.<main_function>`. For instance, if the entry point is `lambda_handler` defined in `lambda_function.py`, the handler info will be `lambda_function.lambda_handler`
 
 ## Setting up local environment
 ### Download and install
-The [linux documenation](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-linux.html#cliv2-linux-install) was followed to install AWS CLI on the local machine. Detailed documentation for all platforms can also be found [here](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html).
+The [linux documenation](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-linux.html#cliv2-linux-install) was followed to install AWS CLI on the local machine. Detailed documentation for all platforms can be found [here](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html).
 
 ##### Installation instructions
 ```bash
@@ -150,4 +150,7 @@ def lambda_handler(event, context):
    Update the lambda function
    aws lambda update-function-code --function-name sample_function.py --s3-bucket sample_bucket --s3-key packages.zip
    ```
+
+Once the function is updated, the function can be triggered from the Lambda dashboard or CLI manually or by setting up a trigger.
+
 I would like to thank [Big Endian Data](https://www.bigendiandata.com/2019-04-15-OpenCV_AWS_Lambda/) for helping me understand the flow and present a simplified procedure here.
