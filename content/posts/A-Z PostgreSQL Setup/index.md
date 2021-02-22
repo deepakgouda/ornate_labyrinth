@@ -64,12 +64,16 @@ to
 ```
 Restart the server
 
-`$ sudo service postgresql restart`
+```bash
+$ sudo service postgresql restart
+```
 
 Login into psql and set your password
 
-`$ psql -U postgres`
-`db> ALTER USER postgres with password 'your-pass';`
+```bash
+$ psql -U postgres
+db> ALTER USER postgres with password 'your-pass';
+```
 
 
 ### 5. Enable remote access to PostgreSQL server 
@@ -87,7 +91,7 @@ Sample config
 listen_addresses = '*'     # what IP address(es) to listen on;
 
 ```
-```
+```bash
 sudo service postgresql restart
 ```
 Configure the server to accept remote connections by editing the `/etc/postgresql/10/main/pg_hba.conf` 

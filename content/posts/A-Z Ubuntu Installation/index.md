@@ -62,12 +62,11 @@ If something went wrong, check the section below.
 > --<cite> She will be loved, Maroon 5</cite>
 
 ## Troubleshooting
-If things did go awry, this section is for you…
 #### 1. Installation got stuck/Stuck on restart after successful completion : 
 This often happens due to issues with creation of the Live USB or even the ISO image used. I've also seen this happen if you are trying to install latest OS on relatively old hardware. In such cases, force shutdown and try other methods/software to create the Live USB or change the ISO image.
 
 #### 2. Grub Rescue prompt :
-Ctrl+Alt+Del to escape this promptTo escape the prompt and boot normally, press Ctrl+Alt+Del. Reason for this error - Live USB wasn't built properly. Check if you have configured the USB with the default settings (UEFI mode installation) while using Rufus or UUI.
+To escape the prompt and boot normally, press Ctrl+Alt+Del. Reason for this error - Live USB wasn't built properly. Check if you have configured the USB with the default settings (UEFI mode installation) while using Rufus or UUI.
 
 #### 3. Unable to Boot into Windows after successful installation :
 Restart the PC and go to Advanced options for Ubuntu.
@@ -89,7 +88,7 @@ If your machine ran Windows 10 Anniversary edition out of the box, your disk mig
 Windows already has an EFI System Partition which can be seen in 'Disk Management'. You should not create another one explicitly unless it's absolutely necessary(never). If you see this error, you have to create the `/boot` partition as mentioned in the installation procedure previously.
 
 ### 6. No GRUB menu/Ubuntu bootloader was not found/Windows starts automatically :
-You need boot-repair. Use your Live USB and follow this link from '2nd Option'.
+You need boot-repair. Use your Live USB and follow [this](https://help.ubuntu.com/community/Boot-Repair) link from '2nd Option'.
 
 ### 7. Ubuntu bootloader was still not found :
 Newer systems use UEFI boot mode, while Ubuntu uses Legacy mode. Windows uses an EFI System Partition for the booting and the ESP works for all systems. Possible causes for this error:

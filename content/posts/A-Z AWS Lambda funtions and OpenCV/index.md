@@ -147,7 +147,7 @@ def lambda_handler(event, context):
    
    # Copy the zip to S3 and import from there, in case the zip exceeds 50 MB
    aws s3 cp packages.zip s3://<sample_bucket>/
-   Update the lambda function
+   # Update the lambda function
    aws lambda update-function-code --function-name sample_function.py --s3-bucket sample_bucket --s3-key packages.zip
    ```
 
