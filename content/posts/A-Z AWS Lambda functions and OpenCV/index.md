@@ -1,5 +1,5 @@
 ---
-title: A-Z AWS Lambda funtions and OpenCV 
+title: A-Z AWS Lambda functions and OpenCV 
 author: Deepak
 date: 2021-02-07
 hero: ./images/diamond.jpg

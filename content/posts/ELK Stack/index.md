@@ -2,8 +2,8 @@
 title: Self-managed ELK Stack
 author: Deepak
 date: 2021-02-22
-hero: ./images/caroline-hernandez.jpg
-excerpt: Setting up a complete ELK Stack to collect, store and parse any logs in real time.
+hero: ./images/orlando-brooke.jpg
+excerpt: Introduction to ELK Stack [Part 1].
 ---
 
 # Introduction
@@ -29,247 +29,51 @@ To create a fresh data stream, [create a custom lifecycle policy](https://www.el
 
 Create a [new index pattern](https://www.elastic.co/guide/en/kibana/current/index-patterns.html#index-patterns-read-only-access) to select data belonging to a particular index and define their properties. Once additional data fields are added to an index, **refresh the field list** for the changes to take place.Once the fields are declared with a specific data type, they cannot be changed and a new index pattern has to be created.
 
-# Filebeat
-Filebeat, being the most commonly used beat has been explained here. Filebeat has to be installed on all the systems which produce logs. Filebeat collects the logs and ships them to Elasticsearch from where Kibana pulls the data for visualization.
-
-### 1. Install
-Instructions provided for [all major OS as well as Docker and Kubernetes](https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-installation-configuration.html#installation).
-
-Install filebeat version 7.8.1 on Debian
-```bash
-curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.8.1-amd64.deb
-sudo dpkg -i filebeat-7.8.1-amd64.deb
-```
-
-### 2. Connect to Elastic Stack
-Edit /etc/filebeat/filebeat.yml
-```yaml
-setup.kibana:
-  host: "<kibana_ip>:5601" # kibana ip and port
-
-output.elasticsearch:
-  hosts: ["<es_ip>:9200"] # elasticsearch ip and port
-
-  username: "elastic"
-  password: "<add password>"
-
-```
-
-### 3. List and enable modules
-```
-filebeat modules list
-filebeat modules enable system nginx mysql
-```
-Configure `/etc/filebeat/modules.d/<module>.yml` file
-
-Add the path to log files in `/etc/filebeat/filebeat.yml`
-```yaml
-filebeat.inputs:
-- type: log
-  enabled: true
-  paths:
-    - /path/to/logs/*.log
-  ignore_older: 17h # ignore files created before the specified relative time
-```
-Multiple files with separate tags/configs
-```yaml
-filebeat.inputs:
-- type: log
-  enabled: true
-  paths:
-     - /path/to/data/*.csv
-  tags: ["csv-type-x"]
-
-- type: log
-  enabled: true
-  paths:
-     - /other/path/to/data/*.csv
-  tags: ["csv-type-y"]
-
-output.logstash:
-   hosts: [ "<logstash_host>:5044"]
-```
-**Complete Config**
-```yaml
-filebeat.inputs:
-- type: log
-  enabled: true
-  paths:
-    - /path/to/logs/*.log
-  ignore_older: 17h
-  fields:
-    source: 'Sample Name 1'
-    tags: ["tag1"]
-- type: log
-  enabled: true
-  paths:
-    - /path/to/logs/*.log
-  ignore_older: 17h
-  fields:
-    source: 'Sample Name 2'
-    tags: ["tag2"]  
-filebeat.config.modules:
-  path: ${path.config}/modules.d/*.yml
-  reload.enabled: false
-setup.ilm.enabled: auto
-setup.ilm.policy_name: "sample-policy"
-setup.ilm.overwrite: false
-setup.ilm.rollover_alias: 'sample-alias-7.8.1'
-setup.template.settings:
-  index.number_of_shards: 1
-  setup.template.enabled: true
-  setup.template.overwrite: false
-  setup.template.name: "sample-template"
-  setup.template.pattern: "sample-template-7.8.1-*"
-setup.kibana:
-  host: "kibana_host:5601"
-output.logstash:
-   hosts: [ "logstash_host:5044"]
-
-```
-
-Detailed info on configurations [here](https://www.elastic.co/guide/en/beats/filebeat/current/configuring-howto-filebeat.html).
-Find more configs [here](https://www.elastic.co/guide/en/beats/filebeat/current/configuration-filebeat-options.html).
-
-**NOTE** Disable the defaults in `modules.d/system.yml` to avoid system logs.
-
-### 4. Set up assets
-From `/etc/filebeat` run
-```bash
-filebeat setup -e
-```
-`-e` is optional and it redirects the error messages from log files to console.
-
-**NOTE** : In case you get errors static elasticsearch is not configured, it's a known [issue](https://github.com/elastic/beats/issues/16336) on github. Use 
-```bash
-filebeat -e
-```
-
-Create a systemd service for filebeat at `/etc/systemd/system/filebeat.service` with the config
-```service
- [Unit]
- Description=Pystrat Filebeat Service
- After=network.target
- StartLimitIntervalSec=0
- [Service]
- Type=simple
- Restart=always
- RestartSec=5s
- User=deepak
- ExecStart=/usr/bin/filebeat -e
- 
- [Install]
- WantedBy=multi-user.target
-```
-
-### 5. Start filebeat
-```bash
-# If you haven't set up filebeat as a systemd process, 
-# it has been explained later
-sudo service filebeat start 
-```
-OR
-```bash
-sudo filebeat -e -c filebeat.yml -d "publish"
-```
-
-### 6. Set up appropriate pipeline configurations
-Further explanation on pipeline configurations in Logstash section.
-
-### 7. View data in Kibana
-Open Kibana dashboard(`http://kibana_host:5601`).
-
-### 8. Filebeat Log location
-```bash
-/var/log/filebeat/
-```
-
-#### [Source](https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-installation-configuration.html)
+# [Filebeat](https://www.deepakgouda.com/Filebeat)
 
 ---
 
-# Logstash
+# [Logstash](https://www.deepakgouda.com/Logstash)
 
-#### Installation
-[Instructions here](https://www.elastic.co/guide/en/logstash/current/installing-logstash.html)
+---
 
-#### Configuration
-Workflow : 
-We have installed filebeat on multiple machines which produce various types of logs. For instance let us consider the situation where machine M1 and M2 each run processes P1 and P2, hence producing logs of category C1 and C2 each. Segregating logs at filebeat is difficult but we can add tags to differentiate the logs in logstash. We setup two separate pipilines such that, logs of type C1 and C2 are parsed separately with a modular config file for each of them. 
+# [Kibana](https://www.deepakgouda.com/Kibana)
 
-1. Assign a source name for each filebeat in _filebeat.yml_
-  ```yml
-    filebeat.inputs:
-    - type: log
-      fields:
-        source: 'Sample Name'
-      fields_under_root: true
-  ```
+---
 
-2. Create _pipeline.yml_ in `/etc/logstash/` with the following configuration
+# Logging and Troubleshooting
+1. Error : 
+	```config
+	error => "mapper_parsing_exception"
+	reason =>  "failed to parse field [host] of type [text] in documents with id 'blah blah'. Preview of field's value: '{name=my.host.name}'"
+	caused_by => "illegal state exception"
+	reason => "Can't get text on START_OBJECT at 1:974"
 
-**Article in progress from here**
-  ```yml
-    - pipeline.id: beats-server
-      config.string: |
-        input { beats { port => 5044 } }
-        output {
-            if [source] == 'dbservername' {
-              pipeline { send_to => dblog }
-            } else if [source] == 'apiservername' {
-              pipeline { send_to => apilog }
-            } else if [source] == 'webservername' { 
-              pipeline { send_to => weblog } 
-            }
-        }
+	```
+	[Solution 1](https://discuss.elastic.co/t/failed-to-parse-field-host-of-type-text-cant-get-text-on-a-start-object-at-1-974/235221/2) : 
 
-    - pipeline.id: dblog-processing
-      path.config: "/Logstash/config/pipelines/dblogpipeline.conf"
-
-    - pipeline.id: apilog-processing 
-      path.config: "/Logstash/config/pipelines/apilogpipeline.conf"
-
-    - pipeline.id: weblog-processing
-      path.config: "/Logstash/config/pipelines/weblogpipeline.conf"
-  ```
-3. Create separate Logstash configuration files for each pipeline at: `/etc/logstash/conf.d/<conf_name>.conf`
-4. Enter the following Logstash configuration:
-
-**_config1.conf_**
-```json
-input {
-        pipeline {
-                address => sample_filebeat1
-        }
-}
-
-filter {
-        grok {
-                match => {
-                                "message" => [
-						"%{TIMESTAMP_ISO8601:log_ts}\+05\:30  \[%{DATA:log_class}\]  \"%{DATA:error_msg} for class \: %{DATA:class_name}\"",
-						"%{TIMESTAMP_ISO8601:log_ts}\+05\:30  \[%{DATA:log_class}\]  \"response received at \:%{TIMESTAMP_ISO8601:response_ts} for class \: %{DATA:segment}\""
-                                ]
-                }
-        }
-	date {
-		match => ["log_ts", "YYYY-MM-dd HH:mm:ss.SSS"]
-		target => "@timestamp"
+	Solution 2 : I had to add index in the output section of logstash config
+	```yaml
+	output {
+			elasticsearch {
+					index => "hft-filebeat"
+					hosts => ["localhost:9200"]
+			}
 	}
-}
+	```
+2. Filebeat logs
+	```bash
+	journalctl -f -u filebeat.service
+	cat /var/log/filebeat/filebeat.log
+	```
+3. Logstash logs
+	```bash
+	sudo journalctl -f -u logstash.service
+	cat /var/log/logstash/logstash-plain.log
+	```
 
-output {
-	elasticsearch {
-		index => "sample_index"
-		hosts => ["localhost:9200"]
-	}
-}
-```
 ---
 
-# Kibana
-
----
 # FAQ 
 ### Deleting a range of index logs
 1. Open dev console of Kibana at `http://<ip_address>:5601/app/kibana#/dev_tools/console`
@@ -289,6 +93,7 @@ POST hft-filebeat/_delete_by_query
 } 
 ```
 Sources
+
 1. [Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-delete-by-query.html)
 2. [Forum](https://discuss.elastic.co/t/delete-logs-in-elasticsearch-after-certain-period/75067/8)
 
