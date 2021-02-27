@@ -1,2 +1,2 @@
 ### Hi there!
-I'm dumping my articles [here](https://deepakgouda.netlify.app/).
+Head over to my [site](https://www.deepakgouda.com/).
