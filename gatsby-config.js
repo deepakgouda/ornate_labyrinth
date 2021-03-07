@@ -2,7 +2,7 @@ module.exports = {
   siteMetadata: {
     title: `OrnateLabyrinth`,
     name: `Deepak`,
-    siteUrl: `https://deepakgouda.netlify.app/`,
+    siteUrl: `https://deepakgouda.com/`,
     description: `My personal space`,
     hero: {
       heading: `Welcome to OrnateLabyrinth, my personal space`,
