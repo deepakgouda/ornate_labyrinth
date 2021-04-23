@@ -97,23 +97,42 @@ All the dependencies were done on the EC2 instance and there were copied to the 
 
 A sample function is created that loads an image from the S3 bucket and returns the image dimensions.
 ```python
+import json
+import os
 import boto3
 import cv2
 import numpy as np
 import io
 
+
 s3 = boto3.resource("s3")
 
-def image_from_s3(bucket, key):
-    bucket = s3.Bucket(bucket)
-    img = bucket.Object(key).get().get("Body").read()
-    nparray = cv2.imdecode(np.asarray(bytearray(img)), cv2.IMREAD_COLOR)
-    return np.shape(nparray)
+def image_from_s3(bucket, key, bnw_bucket):
+   bucket = s3.Bucket(bucket)
+   # Read object from source bucket
+   img = bucket.Object(key).get().get("Body").read()
+   # Parse object as an image
+   img_arr = cv2.imdecode(np.asarray(bytearray(img)), cv2.IMREAD_COLOR)
 
+   bnw_bucket = s3.Bucket(bnw_bucket)
+   path_test = "/tmp/output"  # temp path in lambda.
+   new_key = "bnw-" + key  # assign filename to 'key' variable
+   # Convert colored image to B&W
+   bnw_img = cv2.cvtColor(img_arr, cv2.COLOR_BGR2GRAY)
+
+   # Write image to destination bucket
+   with open(path_test, "wb") as data:
+      data.write(bnw_img)
+      bucket.upload_file(path_test, new_key)
+
+   return {"status": "True", "statusCode": 200, "body": "Image Converted"}
+
+# Entry point of the lambda function
 def lambda_handler(event, context):
-    image_bucket = "sample_bucket"
-    image_key = "sample_image.jpg"
-    return image_from_s3(image_bucket, image_key)
+    image_bucket = "source-bucket-name"
+    image_key = "source-image.jpg"
+    bnw_bucket = "dest-bucket-name"
+    return image_from_s3(image_bucket, image_key, bnw_bucket)
 
 ```
 
@@ -152,5 +171,7 @@ def lambda_handler(event, context):
    ```
 
 Once the function is updated, the function can be triggered from the Lambda dashboard or CLI manually or by setting up a trigger.
+
+NOTE : After adding a trigger, be careful not to write the image into the same bucket. This will cause a cyclic trigger and will result in endless lambda function calls and S3 storage will fill up.
 
 I would like to thank [Big Endian Data](https://www.bigendiandata.com/2019-04-15-OpenCV_AWS_Lambda/) for helping me understand the flow and present a simplified procedure here.
